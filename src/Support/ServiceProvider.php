@@ -2,6 +2,7 @@
 
 namespace Sharks\Support;
 
+use Sharks\Console\Attack;
 use Sharks\Console\Token;
 use Sharks\Console\Up;
 use Sharks\Console\Down;
@@ -10,6 +11,11 @@ use League\Container\ServiceProvider as LeagueServiceProvider;
 
 class ServiceProvider extends LeagueServiceProvider
 {
+    /**
+     * @var boolean
+     */
+    const SINGLETON = true;
+
     /**
      * This array allows the container to be aware of
      * what your service provider actually provides,
@@ -29,8 +35,9 @@ class ServiceProvider extends LeagueServiceProvider
      */
     public function register()
     {
-        $this->getContainer()['up'] = new Up(new DigitalOcean);
-        $this->getContainer()['down'] = new Down(new DigitalOcean);
-        $this->getContainer()['token'] = new Token();
+        $this->container->add('up', new Up(new DigitalOcean));
+        $this->container->add('down', new Down(new DigitalOcean));
+        $this->container->add('token', new Token);
+        $this->container->add('attack', new Attack);
     }
 }

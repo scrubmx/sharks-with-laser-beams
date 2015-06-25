@@ -56,9 +56,10 @@ class Up extends Command
                  'The number of servers to start.', // Description
                  self::NUMBER_OF_INSTANCES          // Default value
              )
-             ->addArgument(
-                 'key',                                                     // Name of the argument
-                 InputArgument::OPTIONAL,                                   // Argument mode
+             ->addOption(
+                 'key',                                                     // Name of the option
+                 'k',                                                       // Short version
+                 InputOption::VALUE_OPTIONAL,                               // Option mode
                  'The path to the public ssh key to connect to the sharks', // Description
                  '~/.ssh/id_rsa.pub'                                        // Default value
              )
@@ -88,7 +89,7 @@ class Up extends Command
         $responses = $this->provider->create(
             $servers,
             $this->getToken($input),
-            $input->getArgument('key')
+            $input->getOption('key')
         );
 
         $data = array_map([$this, 'getResponseBody'], $responses);

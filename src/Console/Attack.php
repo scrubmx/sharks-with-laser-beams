@@ -7,6 +7,13 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
+/**
+ * Class Attack
+ *
+ * sharks attack -n 10000 -c 100
+ *
+ * @package Sharks\Console
+ */
 class Attack extends Command
 {
     /**
@@ -38,7 +45,7 @@ class Attack extends Command
      */
     public function execute(InputInterface $input, OutputInterface $output)
     {
-        $message = "<info>The sharks are firing their lasers — pew! pew!.</info>";
+        $message = "<info>The sharks are firing their lasers... pew! pew! pew!.</info>";
 
         return $output->writeln($message);
     }

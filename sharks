@@ -1,7 +1,6 @@
 #!/usr/bin/env php
 <?php
 
-use Dotenv\Dotenv;
 use League\Container\Container;
 use Sharks\Support\ServiceProvider;
 use Symfony\Component\Console\Application;

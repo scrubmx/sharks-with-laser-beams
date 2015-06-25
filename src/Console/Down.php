@@ -2,6 +2,7 @@
 
 use GuzzleHttp\Client;
 use Sharks\Providers\DigitalOcean;
+use Sharks\Storage\Droplet;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -48,5 +49,9 @@ class Down extends Command
     public function execute(InputInterface $input, OutputInterface $output)
     {
         $this->provider->down();
+
+        Droplet::delete();
+
+        $output->writeln('<info>The instances are now being terminated...</info>');
     }
 }

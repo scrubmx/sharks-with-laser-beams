@@ -13,11 +13,14 @@ $container = new Container;
 
 $container->addServiceProvider(new ServiceProvider);
 
+// TODO: Create config.json and droplets.json on install or init.
+
 $app = new Application('Sharks With Lasers Attached To Their Heads', '1.0');
 
 $app->add($container->get('up'));
 $app->add($container->get('down'));
 $app->add($container->get('token'));
 $app->add($container->get('attack'));
+$app->add($container->get('report'));
 
 $app->run();

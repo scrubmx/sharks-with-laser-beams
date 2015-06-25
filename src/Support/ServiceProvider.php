@@ -2,10 +2,11 @@
 
 namespace Sharks\Support;
 
-use Sharks\Console\Attack;
-use Sharks\Console\Token;
 use Sharks\Console\Up;
 use Sharks\Console\Down;
+use Sharks\Console\Token;
+use Sharks\Console\Report;
+use Sharks\Console\Attack;
 use Sharks\Providers\DigitalOcean;
 use League\Container\ServiceProvider as LeagueServiceProvider;
 
@@ -24,7 +25,7 @@ class ServiceProvider extends LeagueServiceProvider
      *
      * @var array
      */
-    protected $provides = ['up', 'down', 'token'];
+    protected $provides = ['up', 'down', 'token', 'attack', 'report'];
 
     /**
      * Use the register method to register items with the container via the
@@ -35,8 +36,13 @@ class ServiceProvider extends LeagueServiceProvider
      */
     public function register()
     {
-        $this->container->add('up', new Up(new DigitalOcean));
-        $this->container->add('down', new Down(new DigitalOcean));
+        $this->container->add('digitalocean', new DigitalOcean, self::SINGLETON);
+
+        $digitalocean = $this->container->get('digitalocean');
+
+        $this->container->add('up', new Up($digitalocean));
+        $this->container->add('down', new Down($digitalocean));
+        $this->container->add('report', new Report($digitalocean));
         $this->container->add('token', new Token);
         $this->container->add('attack', new Attack);
     }

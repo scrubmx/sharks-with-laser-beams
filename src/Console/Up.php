@@ -51,7 +51,7 @@ class Up extends Command
         $this->setName('up')
              ->setDescription('Start a batch of load testing servers.')
              ->addArgument(
-                 'servers',                         // Name of the argument
+                 'amount',                         // Name of the argument
                  InputArgument::OPTIONAL,           // Argument mode
                  'The number of servers to start.', // Description
                  self::NUMBER_OF_INSTANCES          // Default value
@@ -82,19 +82,20 @@ class Up extends Command
      */
     public function execute(InputInterface $input, OutputInterface $output)
     {
-        $servers = $input->getArgument('servers');
+        $amount = $input->getArgument('amount');
 
-        $output->writeln("<info>Setting up {$servers} sharks to attack the victim...</info>");
+        $output->writeln("<info>Setting up {$amount} sharks to attack the victim...</info>");
 
+        // Create returns an array with all the responses from digitalocean api.
         $responses = $this->provider->create(
-            $servers,
+            $amount,
             $this->getToken($input),
             $input->getOption('key')
         );
 
-        $data = array_map([$this, 'getResponseBody'], $responses);
+        $this->saveResponseData($responses);
 
-        Droplet::save($data);
+        $this->waitUntilDropletsAreActive($output);
 
         $output->writeln("<info>The sharks are ready to attack the victim!</info>");
     }
@@ -124,12 +125,41 @@ class Up extends Command
     }
 
     /**
-     * @param \GuzzleHttp\Psr7\Response $response
-     *
-     * @return mixed
+     * @param $responses
      */
-    private function getResponseBody($response)
+    private function saveResponseData(array $responses)
     {
-        return json_decode($response->getBody()->getContents());
+        $ids = array_map(function($response){
+            $response = json_decode($response->getBody()->getContents());
+            return $response->droplet->id;
+        }, $responses);
+
+        $data = $this->provider->report($ids);
+
+        Droplet::save($data);
+    }
+
+    /**
+     * @param \Symfony\Component\Console\Output\OutputInterface $output
+     */
+    private function waitUntilDropletsAreActive(OutputInterface $output)
+    {
+        $ready = false;
+
+        while( ! $ready) {
+            $output->write('.');
+            sleep(2);
+            $droplets = $this->provider->report();
+
+            foreach($droplets as $droplet) {
+                if ( $droplet->status === 'active' ){
+                    $ready = true;
+
+                    Droplet::save($droplets);
+                }
+            }
+        }
+
+        $output->writeln('.');
     }
 }

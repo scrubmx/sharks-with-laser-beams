@@ -37,6 +37,64 @@ class DigitalOcean
     }
 
     /**
+     * @return array
+     */
+    public function allDroplets()
+    {
+        $http = new Client();
+
+        $response = $http->get("https://api.digitalocean.com/v2/droplets", [
+            'headers' => [
+                'Content-Type'  => 'application/json',
+                'Authorization' => 'Bearer ' . Config::get('api_token'),
+            ]
+        ]);
+
+        $response = json_decode($response->getBody()->getContents());
+
+        return is_null($response) ? [] : $response->droplets;
+    }
+
+    /**
+     * @return array
+     */
+    public function report(array $ids=[])
+    {
+        $droplets = $this->allDroplets();
+
+        $ids = empty($ids) ? Droplet::ids() : $ids;
+
+        $filtered = array_filter($droplets, function($instance) use ($ids) {
+            return in_array($instance->id, $ids);
+        });
+
+        $result = [];
+
+        foreach($filtered as $droplet){
+            $temp = new \stdClass();
+            $temp->id = $droplet->id;
+            $temp->name = $droplet->name;
+            $temp->status = $droplet->status;
+            $temp->ip_address = isset($droplet->networks->v4[0]) ? $droplet->networks->v4[0]->ip_address : '';
+            $temp->region = $droplet->region->name;
+            $temp->price_hourly = $droplet->size->price_hourly;
+            $result[] = $temp;
+        }
+
+        return $result;
+//         return array_map(function($droplet) {
+//            return [
+//                'id'           => $droplet->id,
+//                'name'         => $droplet->name,
+//                'status'       => $droplet->status,
+//                'ip_address'   => isset($droplet->networks->v4[0]) ? $droplet->networks->v4[0]->ip_address : '',
+//                'region'       => $droplet->region->name,
+//                'price_hourly' => $droplet->size->price_hourly
+//            ];
+//        }, $filtered);
+    }
+
+    /**
      * @param $ip
      *
      * @return \Psr\Http\Message\ResponseInterface
@@ -45,13 +103,18 @@ class DigitalOcean
     {
         $http = new Client();
 
-        return $http->delete("https://api.digitalocean.com/v2/droplets/{$ip}", [
-            'headers' => [
-                'Content-Type'  => 'application/json',
-                'Authorization' => 'Bearer ' . Config::get('api_token'),
-            ]
-        ]);
+        try {
+            return $http->delete("https://api.digitalocean.com/v2/droplets/{$ip}", [
+                'headers' => [
+                    'Content-Type'  => 'application/json',
+                    'Authorization' => 'Bearer ' . Config::get('api_token'),
+                ]
+            ]);
+        } catch (\GuzzleHttp\Exception\ClientException $e) {
+            return;
+        }
     }
+
     /**
      * @param $token
      * @param $fingerprint

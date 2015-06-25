@@ -13,6 +13,14 @@ class Droplet extends Storage
     }
 
     /**
+     * @return void
+     */
+    public static function delete()
+    {
+        static::set('droplets', []);
+    }
+
+    /**
      * @return array
      */
     public static function all()
@@ -23,13 +31,33 @@ class Droplet extends Storage
     /**
      * @return array
      */
+    public static function ips()
+    {
+        $droplets = static::all();
+
+        return array_map(function($instance){
+            return $instance->ip_address;
+        }, $droplets);
+    }
+
+    /**
+     * @return array
+     */
     public static function ids()
     {
         $droplets = static::all();
 
         return array_map(function($instance){
-            return $instance->droplet->id;
+            return $instance->id;
         }, $droplets);
+    }
+
+    /**
+     * @return int
+     */
+    public static function count()
+    {
+        return count(static::all());
     }
 
     /**

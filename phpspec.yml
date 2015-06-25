@@ -1,0 +1,4 @@
+suites:
+    main:
+        namespace: Sharks
+        psr4_prefix: Sharks

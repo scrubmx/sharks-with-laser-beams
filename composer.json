@@ -1,0 +1,25 @@
+{
+	"require": {
+		"php": ">=5.5.0",
+		"symfony/console": "2.7.*",
+		"symfony/var-dumper": "2.7.*",
+		"guzzlehttp/guzzle": "6.0.*",
+		"league/container": "^1.3"
+	},
+	"require-dev": {
+		"phpspec/phpspec": "2.2.*"
+	},
+	"autoload": {
+		"psr-4": {
+			"Sharks\\": "src/"
+		},
+		"files": [
+			"src/Support/helpers.php"
+		]
+	},
+	"autoload-dev": {
+		"psr-4": {
+			"Fake\\": "fakes/"
+		}
+	}
+}

@@ -1,0 +1,23 @@
+#!/usr/bin/env php
+<?php
+
+use Dotenv\Dotenv;
+use League\Container\Container;
+use Sharks\Support\ServiceProvider;
+use Symfony\Component\Console\Application;
+
+date_default_timezone_set('America/New_York');
+
+require 'vendor/autoload.php';
+
+$container = new Container;
+
+$container->addServiceProvider(new ServiceProvider);
+
+$app = new Application('Sharks With Lasers Attached To Their Heads', '1.0');
+
+$app->add($container->get('up'));
+$app->add($container->get('down'));
+$app->add($container->get('token'));
+
+$app->run();

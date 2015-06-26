@@ -1,4 +1,6 @@
-<?php  namespace Sharks\Console;
+<?php
+
+namespace Sharks\Console;
 
 use GuzzleHttp\Client;
 use Sharks\Providers\DigitalOcean;

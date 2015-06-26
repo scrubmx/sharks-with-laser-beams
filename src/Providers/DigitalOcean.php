@@ -15,13 +15,13 @@ class DigitalOcean
      * @param  $key
      * @return array
      */
-    public function create($servers, $token, $key)
+    public function create($amount, $token, $key)
     {
         $fingerprint = SSH::getFingerPrint($key);
 
         $droplets = [];
 
-        while($servers--) {
+        while($amount--) {
             $droplets[] = $this->createInstance($token, $fingerprint);
         }
 

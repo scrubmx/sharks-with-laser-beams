@@ -34,7 +34,7 @@ class Up extends Command
     /**
      * @param \Sharks\Providers\DigitalOcean $provider
      */
-    function __construct(DigitalOcean $provider)
+    public function __construct(DigitalOcean $provider)
     {
         $this->provider = $provider;
 
@@ -51,7 +51,7 @@ class Up extends Command
         $this->setName('up')
              ->setDescription('Start a batch of load testing servers.')
              ->addArgument(
-                 'amount',                         // Name of the argument
+                 'amount',                          // Name of the argument
                  InputArgument::OPTIONAL,           // Argument mode
                  'The number of servers to start.', // Description
                  self::NUMBER_OF_INSTANCES          // Default value
@@ -64,11 +64,11 @@ class Up extends Command
                  '~/.ssh/id_rsa.pub'                                        // Default value
              )
              ->addOption(
-                 'token',                       // Name of the option
-                 't',                           // Short version
-                 InputOption::VALUE_OPTIONAL,   // Option mode
-                 'DigitalOcean API Token.',     // Description
-                 NULL                           // Default value
+                 'token',                     // Name of the option
+                 't',                         // Short version
+                 InputOption::VALUE_OPTIONAL, // Option mode
+                 'DigitalOcean API Token.',   // Description
+                 NULL                         // Default value
              );
     }
 

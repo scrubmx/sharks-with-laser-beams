@@ -31,7 +31,7 @@ class Attack extends Command
              ->setDescription('Begin the attack on a specific url.')
              ->addArgument('url', InputArgument::REQUIRED, 'URL of the target to attack.')
              ->addOption(
-                 'requests',                                                // Name of the option
+                 'requests',                                              // Name of the option
                  'r',                                                     // Short version
                  InputOption::VALUE_OPTIONAL,                             // Option mode
                  'The number of total connections to make to the target', // Description

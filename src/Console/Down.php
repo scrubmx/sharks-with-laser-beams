@@ -22,7 +22,10 @@ class Down extends Command
      */
     private $provider;
 
-    function __construct(DigitalOcean $provider)
+    /**
+     * @param \Sharks\Providers\DigitalOcean $provider
+     */
+    public function __construct(DigitalOcean $provider)
     {
         $this->provider = $provider;
 

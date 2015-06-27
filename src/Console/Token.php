@@ -16,7 +16,9 @@ use Symfony\Component\Console\Output\OutputInterface;
 class Token extends Command
 {
     /**
-     * @{inheritDoc}
+     * Configures the current command.
+     *
+     * @return void
      */
     public function configure()
     {

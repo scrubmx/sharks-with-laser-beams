@@ -20,14 +20,9 @@ class Report extends Command
     private $provider;
 
     /**
-     * @var string
-     */
-    public $dropletUrl = 'https://cloud.digitalocean.com/droplets/{id}';
-
-    /**
      * @param \Sharks\Providers\DigitalOcean $provider
      */
-    function __construct(DigitalOcean $provider)
+    public function __construct(DigitalOcean $provider)
     {
         $this->provider = $provider;
 
@@ -35,7 +30,9 @@ class Report extends Command
     }
 
     /**
-     * @{inheritDoc}
+     * Configures the current command.
+     *
+     * @return void
      */
     public function configure()
     {
@@ -59,7 +56,7 @@ class Report extends Command
 
         // Table expects an array of arrays, so we convert objects to arrays
         foreach($data as &$object) {
-            $object = (array)$object;
+            $object = (array) $object;
         }
 
         (new Table($output))->setHeaders($headers)->setRows($data)->render();

@@ -10,7 +10,7 @@ use Sharks\Support\SSH;
 class DigitalOcean
 {
     /**
-     * @param  $servers
+     * @param  $amount
      * @param  $token
      * @param  $key
      * @return array
@@ -60,38 +60,22 @@ class DigitalOcean
      */
     public function report(array $ids=[])
     {
-        $droplets = $this->allDroplets();
-
-        $ids = empty($ids) ? Droplet::ids() : $ids;
-
-        $filtered = array_filter($droplets, function($instance) use ($ids) {
-            return in_array($instance->id, $ids);
-        });
+        $instances = $this->getSharks($ids);
 
         $result = [];
 
-        foreach($filtered as $droplet){
-            $temp = new \stdClass();
-            $temp->id = $droplet->id;
-            $temp->name = $droplet->name;
-            $temp->status = $droplet->status;
-            $temp->ip_address = isset($droplet->networks->v4[0]) ? $droplet->networks->v4[0]->ip_address : '';
-            $temp->region = $droplet->region->name;
-            $temp->price_hourly = $droplet->size->price_hourly;
-            $result[] = $temp;
+         foreach($instances as $instance){
+            $result[] = (object) [
+                'id'           => $instance->id,
+                'name'         => $instance->name,
+                'status'       => $instance->status,
+                'ip_address'   => isset($instance->networks->v4[0]) ? $instance->networks->v4[0]->ip_address : '',
+                'region'       => $instance->region->name,
+                'price_hourly' => $instance->size->price_hourly
+            ];
         }
 
         return $result;
-//         return array_map(function($droplet) {
-//            return [
-//                'id'           => $droplet->id,
-//                'name'         => $droplet->name,
-//                'status'       => $droplet->status,
-//                'ip_address'   => isset($droplet->networks->v4[0]) ? $droplet->networks->v4[0]->ip_address : '',
-//                'region'       => $droplet->region->name,
-//                'price_hourly' => $droplet->size->price_hourly
-//            ];
-//        }, $filtered);
     }
 
     /**
@@ -150,5 +134,20 @@ class DigitalOcean
             ],
             'body' => json_encode($body)
         ]);
+    }
+
+    /**
+     * @param array $ids
+     * @return array
+     */
+    private function getSharks(array $ids=[])
+    {
+        $droplets = $this->allDroplets();
+
+        $ids = empty($ids) ? Droplet::ids() : $ids;
+
+        return array_filter($droplets, function ($instance) use ($ids) {
+            return in_array($instance->id, $ids);
+        });
     }
 }
